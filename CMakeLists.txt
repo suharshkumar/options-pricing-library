@@ -13,13 +13,16 @@ add_compile_options(-Wall -Wextra)
 find_package(Threads REQUIRED)
 
 # --- Core library -----------------------------------------------------------
-add_library(pricer src/BlackScholes.cpp src/Binomial.cpp src/MonteCarlo.cpp)
+add_library(pricer src/BlackScholes.cpp src/Binomial.cpp src/MonteCarlo.cpp src/Heston.cpp)
 target_include_directories(pricer PUBLIC include)
 target_link_libraries(pricer PUBLIC Threads::Threads)
 
-# --- Demo executable --------------------------------------------------------
+# --- Demo executables -------------------------------------------------------
 add_executable(demo src/main.cpp)
 target_link_libraries(demo PRIVATE pricer)
+
+add_executable(heston_demo src/heston_demo.cpp)
+target_link_libraries(heston_demo PRIVATE pricer)
 
 # --- Tests (GoogleTest, fetched automatically) ------------------------------
 include(FetchContent)
@@ -31,7 +34,7 @@ set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
 
 enable_testing()
-add_executable(pricer_tests tests/test_pricer.cpp)
+add_executable(pricer_tests tests/test_pricer.cpp tests/test_heston.cpp)
 target_link_libraries(pricer_tests PRIVATE pricer GTest::gtest_main)
 
 include(GoogleTest)
